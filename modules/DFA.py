@@ -1,6 +1,7 @@
 from PyQt5 import QtWidgets
-from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QPushButton, QSplitter, QFileDialog, 
-                             QLabel, QWidget, QFormLayout, QLineEdit, QComboBox)
+from PyQt5.QtWidgets import (QMainWindow, QVBoxLayout, QPushButton, QSplitter
+                             ,QFileDialog, QLabel, QWidget, QFormLayout
+                             ,QLineEdit, QComboBox, QGroupBox)
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from sklearn.metrics import r2_score
@@ -234,17 +235,24 @@ class DFA(QMainWindow):
 ############################################################################### 
         self.setWindowTitle('Detrended Analysis Fluctuation')
         self.setWindowIcon(QIcon("Icons\DFA.ico"))
-        self.resize(1200, 800)
+        self.resize(1000, 600)
         self.ruta = None
         self.nombreSenial1=''
         self.x=[]
         self.y1=[]
         self.h1=[]
 
-        contain  = QSplitter(Qt.Horizontal)
-        botones  = QtWidgets.QVBoxLayout()
-        graficos = QVBoxLayout()
-        results  = QFormLayout()
+        contain   = QSplitter(Qt.Horizontal)
+        botones   = QtWidgets.QVBoxLayout()
+        graficos  = QVBoxLayout()
+        results1  = QFormLayout()
+        results2  = QFormLayout()
+        results3  = QFormLayout()
+        results4  = QFormLayout()
+        group_box_files    = QGroupBox("Load file(s)")
+        group_box_settings = QGroupBox("Settings")
+        group_box_plots    = QGroupBox("Plots")
+        group_box_values   = QGroupBox("Values")
         #################################################################
         ##     Elementos del layout botones
         #################################################################
@@ -290,15 +298,26 @@ class DFA(QMainWindow):
         #################################################################
         ##     Colocar elementos en layout botones
         #################################################################
-        results.addRow(self.btnLoadSig1)  
-        results.addRow(lblm1, self.txtm1)
-        results.addRow(self.lbl_num_files)
-        results.addRow(lbl_file, self.list3)
-        results.addRow(self.btnDFA1)
-        results.addRow(lbl_DFA, self.list_DFA)
-        results.addRow(lblh1, self.txth1)
-        results.addRow(lblr1, self.txtr1)
-        botones.addLayout(results)
+        results1.addRow(self.btnLoadSig1)  
+        results1.addRow(self.lbl_num_files)
+        group_box_files.setLayout(results1)
+        
+        results2.addRow(lblm1, self.txtm1)
+        group_box_settings.setLayout(results2)
+        
+        results3.addRow(lbl_file, self.list3)
+        results3.addRow(lbl_DFA, self.list_DFA)
+        group_box_plots.setLayout(results3)
+        
+        results4.addRow(lblh1, self.txth1)
+        results4.addRow(lblr1, self.txtr1)
+        group_box_values.setLayout(results4)
+        
+        botones.addWidget(group_box_files)
+        botones.addWidget(group_box_settings)
+        botones.addWidget(group_box_plots)
+        botones.addWidget(group_box_values)
+        botones.addWidget(self.btnDFA1)
         #################################################################
         ##     Colocar elementos en layout graficos
         #################################################################

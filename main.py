@@ -87,7 +87,7 @@ class Principal(QMainWindow):
         pg.setConfigOption('background', 'w')
         self.setWindowTitle('PyMFDFA')
         self.setWindowIcon(QIcon("Icons\multifractal.ico"))
-        self.resize(1200, 800)
+        self.resize(1000, 600)
         ##################################################################
         ### Barra de Herramientas 
         ##################################################################

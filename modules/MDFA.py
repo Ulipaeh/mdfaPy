@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import (QMainWindow,QPushButton, QVBoxLayout, QSplitter, 
                              QCheckBox,QFileDialog ,QLabel, QWidget, QLineEdit, 
-                             QFormLayout, QComboBox, QButtonGroup,QRadioButton)
+                             QFormLayout, QComboBox, QButtonGroup,QRadioButton,
+                             QGroupBox)
 from PyQt5.QtCore import Qt
 from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
@@ -268,7 +269,7 @@ class MDFA(QMainWindow):
         sns.set_context("paper")
         self.setWindowTitle('Multifractal Detrended Analysis Fluctuation')
         self.setWindowIcon(QIcon("Icons\multifractal.ico"))
-        self.resize(1200, 800)
+        self.resize(1000, 600)
         ########Variables Globales ####################################################
         ###############################################################################        
         self.rutas = None
@@ -277,7 +278,13 @@ class MDFA(QMainWindow):
         contain  = QSplitter(Qt.Horizontal)
         botones  = QtWidgets.QVBoxLayout()
         graficos = QVBoxLayout()
-        results  = QFormLayout()
+        results1 = QFormLayout()
+        results2 = QFormLayout()
+        results3 = QFormLayout()
+        group_box_files    = QGroupBox("Load file(s)")
+        group_box_settings = QGroupBox("Settings")
+        group_box_plots    = QGroupBox("Plots")
+        
         #################################################################
         ##     Elementos del layout botones
         ################################################################# 
@@ -347,7 +354,7 @@ class MDFA(QMainWindow):
         self.plots.exclusive() 
         self.plots.buttonClicked.connect(self.print_val)
         
-        lbl_MDFA = QLabel("MFDFA: ")
+        lbl_MDFA = QLabel("File: ")
         lbl_MDFA.setStyleSheet(font_size)
         
         self.list_MDFA = QComboBox()
@@ -366,22 +373,32 @@ class MDFA(QMainWindow):
         #################################################################
         ##     Colocar elementos en layout botones
         #################################################################
-        botones.addWidget(self.btnLoadSig)
-        results.addRow(self.lbl_num_files)
-        results.addRow(lbl_file, self.list3)
-        results.addRow(lbl_check1, self.check1)
-        results.addRow('Q+:', self.txtQmax)
-        results.addRow('Q-:', self.txtQmin)
-        results.addRow('dQ:',   self.txtdQ)
-        results.addRow('m:',    self.txtm)
-        results.addRow(self.lbltime, self.txttime)
-        results.addRow(self.btnMDFA) 
-        results.addRow(lbl_MDFA, self.list_MDFA)
-        results.addRow(b1)
-        results.addRow(b2)
-        results.addRow(b3)
-        results.addRow(self.btnSavechar) 
-        botones.addLayout(results)
+        results1.addRow(self.btnLoadSig)
+        results1.addRow(self.lbl_num_files)
+        results1.addRow(lbl_file, self.list3)
+        group_box_files.setLayout(results1)
+        
+        results2.addRow(lbl_check1, self.check1)
+        results2.addRow('Q+:', self.txtQmax)
+        results2.addRow('Q-:', self.txtQmin)
+        results2.addRow('dQ:', self.txtdQ  )
+        results2.addRow('m:',  self.txtm   )
+        results2.addRow(self.lbltime, self.txttime)
+        group_box_settings.setLayout(results2)
+        
+        results3.addRow(lbl_MDFA, self.list_MDFA)
+        results3.addRow(b1)
+        results3.addRow(b2)
+        results3.addRow(b3)
+        group_box_plots.setLayout(results3)
+        
+    
+        botones.addWidget(group_box_files)
+        botones.addWidget(group_box_settings)
+        botones.addWidget(group_box_plots)
+        
+        botones.addWidget(self.btnMDFA) 
+        botones.addWidget(self.btnSavechar) 
         #################################################################
         ##     Colocar elementos en layout graficos
         #################################################################
