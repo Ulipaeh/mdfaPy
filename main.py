@@ -48,8 +48,6 @@ class Principal(QMainWindow):
             self.plot1.setTitle(self.nombre)
             self.plot1.plot(self.y,pen='k')
             self.btnIniciar.setEnabled(True)
-            
-
 #%%
     def enabledButtons(self):
         self.btnAdd.setEnabled(True)
