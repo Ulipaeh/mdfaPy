@@ -3,15 +3,12 @@ from PyQt5.QtWidgets import (QMainWindow,QPushButton, QVBoxLayout, QSplitter,
                              QFormLayout, QComboBox, QButtonGroup,QRadioButton,
                              QGroupBox)
 from PyQt5.QtCore import Qt
-from PyQt5 import QtWidgets
 from PyQt5.QtGui import QIcon
 from modules.Dialog import Dialog
 
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
-import matplotlib.pyplot as plt
-import seaborn as sns
 from time import time
 import math as math
 from numba import jit
@@ -257,38 +254,27 @@ class MDFA(QMainWindow):
 #%%
     def initUI(self):
         pg.setConfigOption('background', 'w')
-        params = {
-                'figure.figsize': [4, 4],
-                'figure.dpi': 300,
-                'savefig.dpi': 300
-           }
-        plt.rcParams.update(params)
-        sns.set()
-        sns.set_style("white")
-        sns.set_palette("muted")
-        sns.set_context("paper")
         self.setWindowTitle('Multifractal Detrended Analysis Fluctuation')
         self.setWindowIcon(QIcon("Icons\multifractal.ico"))
-        self.resize(1000, 600)
         ########Variables Globales ####################################################
         ###############################################################################        
         self.rutas = None
         self.nombreSenial=''
         self.int_state = 0
         contain  = QSplitter(Qt.Horizontal)
-        botones  = QtWidgets.QVBoxLayout()
+        botones  = QVBoxLayout()
         graficos = QVBoxLayout()
+        
         results1 = QFormLayout()
         results2 = QFormLayout()
         results3 = QFormLayout()
         group_box_files    = QGroupBox("Load file(s)")
         group_box_settings = QGroupBox("Settings")
         group_box_plots    = QGroupBox("Plots")
-        
         #################################################################
         ##     Elementos del layout botones
         ################################################################# 
-        font_size = 'font-size: 20px'
+        font_size = 'font-size: 18px'
         
         self.btnLoadSig = QPushButton('Load signal')
         self.btnLoadSig.clicked.connect(self.cargarSenial)
@@ -312,7 +298,7 @@ class MDFA(QMainWindow):
         self.txtQmin.setEnabled(True)
         self.txtQmin.setStyleSheet(font_size)
         
-        self.txtdQ = QLineEdit('.1')
+        self.txtdQ = QLineEdit('0.1')
         self.txtdQ.setEnabled(True)
         self.txtdQ.setStyleSheet(font_size)
         
@@ -392,7 +378,6 @@ class MDFA(QMainWindow):
         results3.addRow(b3)
         group_box_plots.setLayout(results3)
         
-    
         botones.addWidget(group_box_files)
         botones.addWidget(group_box_settings)
         botones.addWidget(group_box_plots)

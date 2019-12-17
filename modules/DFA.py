@@ -7,13 +7,14 @@ from PyQt5.QtGui import QIcon
 from sklearn.metrics import r2_score
 from modules.Dialog import Dialog
 
-import pyqtgraph as pg 
-import pandas as pd
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-import math as m
+from pandas import (read_csv, DataFrame)
+from numpy import (asarray, transpose, arange, log10, vectorize, 
+                   zeros, cumsum, mean, polyfit, polyval, sqrt)
+from math import exp
 from pathlib import Path
+
+import matplotlib.pyplot as plt
+import pyqtgraph as pg 
 
 class DFA(QMainWindow):
     def __init__(self):      
@@ -60,17 +61,18 @@ class DFA(QMainWindow):
         self.R = []
         order = int(self.txtm1.text())
         nombres_archivos = []
+        
+        
         for i in range(len(self.rutas)):
-            data = pd.read_csv(self.rutas[i], sep='\t', header = None )
+            data = read_csv(self.rutas[i], sep='\t', header = None )
             lineas= data.shape[1]
             if(lineas == 1):
-                self.y1 = np.asarray(data[0])
+                self.y1 = asarray(data[0])
             elif(lineas == 2):
-                self.y1 = np.asarray(data[1])
-            names=str.split(self.rutas[i],"/")
-            t=len(names)
+                self.y1 = asarray(data[1])
+            names = str.split(self.rutas[i],"/")
+            t = len(names)
             nombre= names[t-1]
-            
             names = str.split(self.rutas[i],nombre)
             nam   = str.split(nombre,'.')
   
@@ -78,37 +80,37 @@ class DFA(QMainWindow):
             path = Path(RUTA)
             path.mkdir(parents = True,exist_ok = True)
             
-            xn = np.arange(0, 135, 1)
-            func = np.vectorize(lambda x: int(10.1*m.exp(0.0866 * x)))
+            xn = arange(0, 135, 1)
+            func = vectorize(lambda x: int(10.1*exp(0.0866 * x)))
             n = func(xn)
             self.s1 = []
             for j in range(len(n)):
                 if(n[j]<=int(len(self.y1)/4)):
                     self.s1.append(n[j]) 
-            self.fn1 = np.zeros(len(self.s1))
+            self.fn1 = zeros(len(self.s1))
             for l in range(len(self.s1)):
                 n_1= self.s1[l]
                 N = len(self.y1)
                 n = int(N/n_1)
                 N1 = int(n_1*n)
-                y = np.zeros((N))
-                Yn = np.zeros((N))
-                fitcoef = np.zeros((n,order+1))
-                y = np.cumsum((self.y1-np.mean(self.y1)))
-                x_aux = np.zeros(int(n_1))
+                y = zeros((N))
+                Yn = zeros((N))
+                fitcoef = zeros((n,order+1))
+                y = cumsum((self.y1-mean(self.y1)))
+                x_aux = zeros(int(n_1))
                 for i in range(int(n_1)):
-                    x_aux[i]=i
+                    x_aux[i] = i
                 for j in range(n):
-                    y_aux=y[int(j*n_1):int(j*n_1+n_1)]
-                    fitcoef[j]=np.polyfit(x_aux,y_aux,order)
+                    y_aux = y[int(j*n_1):int(j*n_1+n_1)]
+                    fitcoef[j] = polyfit(x_aux,y_aux,order)
                 for j in range(n):
-                    Yn[int(j*n_1):int(j*n_1+n_1)]=np.polyval(fitcoef[j],x_aux)
-                sum1    = sum(pow(np.transpose(y)-Yn,2))/N1
-                self.fn1[l]   = np.sqrt(sum1)
+                    Yn[int(j*n_1):int(j*n_1+n_1)] = polyval(fitcoef[j],x_aux)
+                sum1    = sum(pow(transpose(y)-Yn,2))/N1
+                self.fn1[l]   = sqrt(sum1)
 
-            self.h1=round(np.polyfit(np.log10(self.s1),np.log10(self.fn1),1)[0],4) 
-            self.fn.append(np.log10(self.fn1))
-            self.s.append(np.log10(self.s1))
+            self.h1 = round(polyfit(log10(self.s1), log10(self.fn1),1)[0],4) 
+            self.fn.append(log10(self.fn1))
+            self.s.append(log10(self.s1))
             self.h.append(self.h1)
             
             plt.figure()
@@ -119,21 +121,21 @@ class DFA(QMainWindow):
             
             
             datos = []
-            datos.append(np.log10(self.s1))
-            datos.append(np.log10(self.fn1))
-            datos = np.transpose(np.asarray(datos))
+            datos.append(log10(self.s1))
+            datos.append(log10(self.fn1))
+            datos = transpose(asarray(datos))
 
-            datos = pd.DataFrame(datos)
+            datos = DataFrame(datos)
             datos.to_csv(RUTA + nam[0]+' ln(F) vs ln(n).txt',header = None, index = False, sep='\t')
             rutaSave = RUTA
             nombres_archivos.append(nam[0]+':')
             
             if(len(self.rutas)!=0):
                 ajuste = []
-                b = np.polyfit(np.log10(self.s1),np.log10(self.fn1),1)[1]  
+                b = polyfit(log10(self.s1), log10(self.fn1),1)[1]  
                 for i in range(len(self.s1)):
-                    ajuste.append(self.h1*np.log10(self.s1[i])+b)
-                rcuadrada = round(r2_score(np.log10(self.fn1), ajuste),4)
+                    ajuste.append(self.h1*log10(self.s1[i])+b)
+                rcuadrada = round(r2_score(log10(self.fn1), ajuste),4)
                 self.R.append(rcuadrada)
                 
             plt.figure()
@@ -141,16 +143,16 @@ class DFA(QMainWindow):
             plt.title(nam[0], fontsize = 15)
             plt.xlabel('Ln(n)', fontsize = 10)
             plt.ylabel('Ln(F(n))', fontsize = 10)
-            plt.plot(np.log10(self.s1), np.log10(self.fn1), label = 'Original')
-            plt.plot(np.log10(self.s1), ajuste, label = 'Adjust')
+            plt.plot(log10(self.s1), log10(self.fn1), label = 'Original')
+            plt.plot(log10(self.s1), ajuste, label = 'Adjust')
             plt.legend()
             plt.savefig(RUTA + nam[0]+' ln(F) vs ln(n).png', dpi = 300)
             plt.close()
             
             
                 
-        self.R = np.asarray(self.R) 
-        self.h = np.asarray(self.h)
+        self.R = asarray(self.R) 
+        self.h = asarray(self.h)
         self.list_DFA.addItem('')
         for i in range(len(self.rutas)):
             names=str.split(self.rutas[i],"/")
@@ -161,15 +163,15 @@ class DFA(QMainWindow):
         datos_R = []
         datos_R.append(nombres_archivos) 
         datos_R.append(self.R)   
-        datos_R = np.transpose(np.asarray(datos_R))
-        datos_R = pd.DataFrame(datos_R)
+        datos_R = transpose(asarray(datos_R))
+        datos_R = DataFrame(datos_R)
         datos_R.to_csv(rutaSave+'R^2.txt', header = None, index = False, sep = '\t')
         
         datos_h = []
         datos_h.append(nombres_archivos) 
         datos_h.append(self.h)   
-        datos_h = np.transpose(np.asarray(datos_h))
-        datos_h = pd.DataFrame(datos_h)
+        datos_h = transpose(asarray(datos_h))
+        datos_h = DataFrame(datos_h)
         datos_h.to_csv(rutaSave+'Hurst Exponent.txt', header = None, index = False, sep = '\t')       
          
         self.dialog = Dialog('Done!!','Icons\listo.png')
@@ -181,12 +183,12 @@ class DFA(QMainWindow):
             self.plot1.clear()
             i= self.list3.currentIndex()-1
             if(len(self.rutas)!=0):            
-                data = pd.read_csv(self.rutas[i],sep='\t', header=None)
+                data = read_csv(self.rutas[i],sep='\t', header=None)
                 lineas= data.shape[1]
                 if(lineas == 1):
-                    self.y = np.asarray(data[0])
+                    self.y = asarray(data[0])
                 elif(lineas == 2):
-                    self.y = np.asarray(data[1])
+                    self.y = asarray(data[1])
                 self.plot1.setLabel('bottom',color='k', **{'font-size':'14pt'})
                 self.plot1.getAxis('bottom').setPen(pg.mkPen(color='k', width=1))
                 # Y1 axis   
@@ -226,10 +228,6 @@ class DFA(QMainWindow):
                 'savefig.dpi': 300
            }
         plt.rcParams.update(params)
-        sns.set()
-        sns.set_style("white")
-        sns.set_palette("muted")
-        sns.set_context("paper")
 ###############################################################################
 ########Variables Globales ####################################################
 ############################################################################### 

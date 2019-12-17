@@ -8,15 +8,14 @@ from PyQt5.QtGui import QIcon
 from modules.DFA import DFA
 from modules.MDFA import MDFA
 import pyqtgraph as pg  
-import numpy as np
-import pandas as pd
+
+from numpy import (asarray, transpose)
+from pandas import (read_csv, DataFrame)
 #%%
 class Principal(QMainWindow):
-
     def __init__(self):
         super().__init__()
         self.initUI()
-        
     def DFA_boton(self):
         self.DFAWindow = DFA()
         self.DFAWindow.show()
@@ -31,12 +30,12 @@ class Principal(QMainWindow):
         self.ruta = self.nombreSenial[0]
         if(len(self.ruta)!=0):
             print(self.nombreSenial)
-            datos = pd.read_csv(self.ruta,sep='\t', header=None)
+            datos = read_csv(self.ruta,sep='\t', header=None)
             lineas= datos.shape[1]
             if(lineas == 1):
-                self.y = np.asarray(datos[0])
+                self.y = asarray(datos[0])
             elif(lineas == 2):
-                self.y = np.asarray(datos[1])
+                self.y = asarray(datos[1])
             self.plot1.setLabel('bottom',color='k', **{'font-size':'14pt'})
             self.plot1.getAxis('bottom').setPen(pg.mkPen(color='k', width=1))
             # Y1 axis   
@@ -63,8 +62,8 @@ class Principal(QMainWindow):
         ini = int(regionSelected[0])
         fin = int(regionSelected[1])
         self.duracion.append(self.y[ini:fin])
-        self.duracion=np.transpose(self.duracion)
-        df = pd.DataFrame(self.duracion)
+        self.duracion = transpose(self.duracion)
+        df = DataFrame(self.duracion)
         names = str.split(self.nombreSenial[0],self.nombre)
         nam   = str.split(self.nombre,'.')
         df.to_csv(names[0]+nam[0]+'_seg_'+str(self.contador)+'.txt',index=False,sep='\t', header = None, mode = 'w') 
@@ -85,7 +84,6 @@ class Principal(QMainWindow):
         pg.setConfigOption('background', 'w')
         self.setWindowTitle('PyMFDFA')
         self.setWindowIcon(QIcon("Icons\multifractal.ico"))
-        self.resize(1000, 600)
         ##################################################################
         ### Barra de Herramientas 
         ##################################################################
@@ -132,9 +130,9 @@ class Principal(QMainWindow):
         #################################################################
         ##     Definición de elementos contenedores
         #################################################################
-        contain=QSplitter(Qt.Horizontal)
+        contain  = QSplitter(Qt.Horizontal)
         graficos = QVBoxLayout()
-        botones = QVBoxLayout()
+        botones  = QVBoxLayout()
         results  = QFormLayout()
         #################################################################
         ##     Elementos del layout botones
