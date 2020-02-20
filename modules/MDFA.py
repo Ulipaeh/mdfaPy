@@ -6,6 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from modules.Dialog import Dialog
 
+from sklearn.metrics import r2_score
 import numpy as np
 import pandas as pd
 import pyqtgraph as pg
@@ -93,6 +94,7 @@ class MDFA(QMainWindow):
             self.taus       = np.transpose(np.zeros((len(q)-1,len(self.rutas))))
             self.hches      = np.transpose(np.zeros((len(q)-1,len(self.rutas))))
             for i in range(len(self.rutas)):
+                R = []
                 self.y = np.asarray(pd.read_csv(self.rutas[i], sep='\t', header = None ))
                 val = len(self.y) / 4
                 s = n[n < val]
@@ -128,12 +130,30 @@ class MDFA(QMainWindow):
                 logFq = np.log10(Fq)
                 logFq = np.transpose(logFq)
                 Hq    = np.zeros(len(q))
+                fes  = []
+                eses = []
                 for nq in range(len(q)):
+                    f = np.transpose(logFq[:][nq])
+                    fes.append(f)
+                    eses.append(np.log10(s))
                     P = np.polyfit(np.log10(s),logFq[:][nq],1)
                     if(self.int_state == 0):
                         Hq[nq] = P[0]
                     elif(self.int_state == 1):
                         Hq[nq] = P[0]-1
+                    ajuste = []
+                    for w in range(len(s)):
+                        ajuste.append((Hq[nq]+1)*np.log10(s[w])+P[1])
+                    rcuadrada = round(r2_score(f, ajuste),4)
+                    R.append(rcuadrada)
+                # fes = pd.DataFrame(fes)
+                # fes.to_csv(self.rutas[i]+'F(sq).txt', sep = '\t', index = False, header = None)
+                # eses = pd.DataFrame(eses)   
+                # eses.to_csv(self.rutas[i]+'s.txt', sep = '\t', index = False, header = None)
+
+                # ajustes = pd.DataFrame(R)
+                # ajustes.to_csv(self.rutas[i]+'R_cuadrada.txt', sep = '\t', index = False, header = None)
+                
                 t  = q*Hq-1
                 α  = np.diff(t)/dq
                 Hq = Hq[0:len(Hq)-1]

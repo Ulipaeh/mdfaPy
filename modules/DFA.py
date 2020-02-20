@@ -149,8 +149,6 @@ class DFA(QMainWindow):
             plt.savefig(RUTA + nam[0]+' ln(F) vs ln(n).png', dpi = 300)
             plt.close()
             
-            
-                
         self.R = asarray(self.R) 
         self.h = asarray(self.h)
         self.list_DFA.addItem('')
