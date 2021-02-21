@@ -118,6 +118,7 @@ class DFA(QMainWindow):
             plt.grid(True)
             plt.plot(self.y1)
             plt.savefig(RUTA + nam[0]+' Serie.png', dpi = 300)
+            plt.close()
             
             
             datos = []

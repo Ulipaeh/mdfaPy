@@ -60,7 +60,7 @@ class CutSignals(QMainWindow):
         linea2= pg.InfiniteLine(pos= fin, angle=90, movable=False)
         self.plot1.addItem(linea1)
         self.plot1.addItem(linea2)
-        self.lr.setRegion([fin,fin+6000])
+        self.lr.setRegion([fin,fin+500])
 
 #%%
     def reboot(self):
