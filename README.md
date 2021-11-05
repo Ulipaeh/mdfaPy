@@ -2,6 +2,11 @@
 
 A graphical interface to fractal/multifractal analysis in time series. 
 
+## Cite
+Please cite this article as: 
+
+Ulises Paredes-Hernández, Patricia Pliego-Pastrana, Enrique Vázquez-Mendoza, Consuelo Morgado-Valle, Luis Beltran-Parrazal, Arturo Criollo-Pérez, Erika Elizabeth Rodriguez-Torres, Fractal and Multifractal Characterization of in vitro respiratory recordings of the pre-Bötzinger Complex, Brain Multiphysics (2021), doi: https://doi.org/10.1016/j.brain.2021.100026
+
 ## Install 🔧
 
 1. Install python 3.7 (download link https://www.python.org/downloads/release/python-370/ ), mark "Add to path" option, add click next.
